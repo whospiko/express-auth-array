@@ -39,7 +39,7 @@ export async function Bootstrap() {
     const productController: FakeProductController = new FakeProductController();
 
     // Boot Middleware
-    const authMiddleware: AuthMiddleware = new AuthMiddleware(userService)
+    const authMiddleware: AuthMiddleware = new AuthMiddleware()
     const authorizeMiddleware: AuthorizeMiddleware = new AuthorizeMiddleware()
 
     const app = express();
