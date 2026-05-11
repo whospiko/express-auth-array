@@ -5,7 +5,6 @@ import {RoleRepo} from "../../repo/RoleRepo";
 import {UserRoleRepo} from "../../repo/UserRoleRepo";
 import {PermissionRepo} from "../../repo/PermissionRepo";
 import {RolePermissionRepo} from "../../repo/RolePermissionRepo";
-import {fakeSign} from "../../configs/FakeJwt";
 
 export class UserServiceImpl implements UserService {
 
@@ -24,21 +23,15 @@ export class UserServiceImpl implements UserService {
         this.rolePermissionRepo = rolePermissionRepo;
     }
 
-    async login(username: string, password: string): Promise<string> {
+    async getUserByUsernameAndPassword(username: string, password: string): Promise<User> {
         const user: User|null = await this.userRepo.findByUsernameAndPassword(username, password);
-
         if(!user) {
             throw new Error("User not found");
         }
-
-        const detail =  await this.getUserById(user.getId())
-
-        return fakeSign({
-            id: detail.getId(),
-            roles: detail.getRoleNames(),
-            permissions: detail.getPermissionNames()
-        });
+        return Promise.resolve(user);
     }
+
+
 
     async getUserById(id: number): Promise<User> {
 

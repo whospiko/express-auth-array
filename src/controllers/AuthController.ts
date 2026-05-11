@@ -1,13 +1,13 @@
-import {UserService} from "../services/UserService";
 import {Request, Response} from "express";
 import {HttpStatus} from "../enums/HttpStatus";
+import {AuthService} from "../services/AuthService";
 
 export class AuthController{
 
-    private userService: UserService;
+    private authService: AuthService;
 
-    constructor(userService: UserService) {
-        this.userService = userService;
+    constructor(authService: AuthService) {
+        this.authService = authService;
     }
 
     public async login(req: Request, res: Response) {
@@ -19,7 +19,7 @@ export class AuthController{
             throw new Error("Username or Password is required");
         }
 
-        const token = await this.userService.login(username, password);
+        const token = await this.authService.login(username, password);
 
         res.status(HttpStatus.OK).json({
             data: {"token": token},

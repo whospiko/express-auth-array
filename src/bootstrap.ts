@@ -20,6 +20,8 @@ import {userRoutes} from "./routes/userRoute";
 import {productRoutes} from "./routes/ProductRoute";
 import {authRoutes} from "./routes/AuthRoute";
 import {AuthController} from "./controllers/AuthController";
+import {AuthService} from "./services/AuthService";
+import {AuthServiceImpl} from "./services/impl/AuthServiceImpl";
 
 
 export async function Bootstrap() {
@@ -32,10 +34,12 @@ export async function Bootstrap() {
 
     // Service Boot
     const userService: UserService = new UserServiceImpl(userRepo, roleRepo, permissionRepo, userRoleRepo, rolePermission);
+    const authService: AuthService = new AuthServiceImpl(userService)
+
 
     // Controller Boot
     const userController: UserController = new UserController(userService);
-    const authController: AuthController = new AuthController(userService);
+    const authController: AuthController = new AuthController(authService);
     const productController: FakeProductController = new FakeProductController();
 
     // Boot Middleware
