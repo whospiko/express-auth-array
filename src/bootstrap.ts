@@ -22,6 +22,9 @@ import {authRoutes} from "./routes/AuthRoute";
 import {AuthController} from "./controllers/AuthController";
 import {AuthService} from "./services/AuthService";
 import {AuthServiceImpl} from "./services/impl/AuthServiceImpl";
+import {OrderController} from "./controllers/OrderController";
+import {orderRoute} from "./routes/OrderRoute";
+import {PaymentController} from "./controllers/PaymentController";
 
 
 export async function Bootstrap() {
@@ -41,6 +44,8 @@ export async function Bootstrap() {
     const userController: UserController = new UserController(userService);
     const authController: AuthController = new AuthController(authService);
     const productController: FakeProductController = new FakeProductController();
+    const orderController: OrderController = new OrderController();
+    const paymentController: PaymentController = new PaymentController();
 
     // Boot Middleware
     const authMiddleware: AuthMiddleware = new AuthMiddleware()
@@ -48,7 +53,7 @@ export async function Bootstrap() {
 
     const app = express();
 
-    const port = process.env.PORT || 8080;
+    const port = process.env.PORT || 8091;
 
     app.use(express.json());
 
@@ -56,6 +61,11 @@ export async function Bootstrap() {
     app.use("/auth", authRoutes(authController, authMiddleware))
     app.use("/users", userRoutes(userController, authMiddleware));
     app.use("/products", productRoutes(productController, authMiddleware, authorizeMiddleware));
+    app.use("/orders", orderRoute(orderController))
+
+    app.post("/payments", paymentController.generateQR.bind(paymentController));
+    app.post("/checkmd5", paymentController.checkMd5Payment.bind(paymentController));
+    app.post("/decode", paymentController.decodePayment.bind(paymentController));
 
 
     app.listen(port, () => console.log(`Listening on port ${port}`));
